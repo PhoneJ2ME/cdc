@@ -50,6 +50,7 @@ src/share/personal/demo/personal/DemoApplet.html svn_mime_002dtype=text%2Fhtml
 src/share/personal/native/awt/pocketpc/awt.ico svn_mime_002dtype=application%2Foctet-stream
 src/share/personal/native/awt/pocketpc/check.bmp svn_mime_002dtype=application%2Foctet-stream
 src/share/personal/native/awt/pocketpc/hand.cur svn_mime_002dtype=application%2Foctet-stream
+src/win32/bin/splash.res svn_mime_002dtype=application%2Foctet-stream
 src/win32/personal/native/compat/test2.ico svn_mime_002dtype=application%2Foctet-stream
 test/share/basis/tests/volatileImage/duke.gif svn_mime_002dtype=application%2Foctet-stream
 test/share/gunit/classes/gunit/container/package.html svn_mime_002dtype=text%2Fhtml
