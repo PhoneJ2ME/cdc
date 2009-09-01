@@ -2742,6 +2742,7 @@ jvmti_GetAllStackTraces(jvmtiEnv* jvmtienv,
     err = jvmti_Allocate(jvmtienv, threadCount * sizeof(jthread),
 			 (unsigned char **)&threadlist);
     if (err != JVMTI_ERROR_NONE) {
+        CVM_THREAD_UNLOCK(ee);
 	return err;
     }
     for (index = 0; index < threadCount; index++) {
@@ -4485,12 +4486,17 @@ jvmti_GetLoadedClasses(jvmtiEnv* jvmtienv,
     /* Seize classTableLock so nothing gets added while we're counting. */
     CVM_CLASSTABLE_LOCK(ee);
 
-    CVMclassIterateAllClasses(ee, &LoadedClassesCountCallback, data);
+    /* NOTE: for this release only iterate dynamic classes */
+    CVMclassIterateDynamicallyLoadedClasses(ee, &LoadedClassesCountCallback,
+                                            data); 
+    /*CVMclassIterateAllClasses(ee, &LoadedClassesCountCallback, data);*/
     sz = CVMint2Long(data->numClasses * sizeof(jclass));
     rc = jvmti_Allocate(jvmtienv, sz, (unsigned char**)classesPtr);
     if (rc == JVMTI_ERROR_NONE) {
 	data->classes = *classesPtr;
-	CVMclassIterateAllClasses(ee, &LoadedClassesGetCallback, data);
+        CVMclassIterateDynamicallyLoadedClasses(ee, &LoadedClassesGetCallback,
+          data);
+        /*CVMclassIterateAllClasses(ee, &LoadedClassesGetCallback, data);*/
 	rc = data->err;
     }
 
@@ -6496,8 +6502,9 @@ jvmti_RawMonitorWait(jvmtiEnv* jvmtienv,
     error = CVMnamedSysMonitorWait((CVMNamedSysMonitor *) monitor, currentEE,
 				   millis);
     switch (error) {
-    case CVM_WAIT_OK:		result = JVMTI_ERROR_NONE; break;
-    case CVM_WAIT_INTERRUPTED:  result = JVMTI_ERROR_INTERRUPT; break;
+    case CVM_WAIT_OK:		
+    case CVM_WAIT_INTERRUPTED:
+        result = JVMTI_ERROR_NONE; break;
     case CVM_WAIT_NOT_OWNER:	result = JVMTI_ERROR_NOT_MONITOR_OWNER; break;
     }
     return result;

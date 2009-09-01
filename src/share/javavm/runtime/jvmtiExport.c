@@ -1875,7 +1875,14 @@ void CVMjvmtiPostStartUpEvents(CVMExecEnv *ee)
     }
 
     /* 3. Post Object Allocation Events: */
-    if (CVMjvmtiShouldPostVmObjectAlloc()) {
+    /* locking/deadlock issues with netbeans profiler code
+     * when this thread upcalls to java and quicken happens and 
+     * classloader lock is attempted.  mutex 'rank' assertion gets
+     * thrown. If we grab classloader lock here, then another profiler thread
+     * will run and attempt to grab classloader lock in quicken and then
+     * deadlock occurs.
+     */
+    if (CVM_FALSE /*CVMjvmtiShouldPostVmObjectAlloc()*/) {
 #ifdef CVM_JIT
 	CVMsysMutexLock(ee, &CVMglobals.jitLock);
 #endif
