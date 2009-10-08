@@ -316,7 +316,6 @@ CVMioOpen(const char *name, CVMInt32 openMode,
 	fdTable[fdIndex] = CreateFile(wc, mode, 
 				      FILE_SHARE_READ | FILE_SHARE_WRITE,
 				      0, cFlag, FILE_ATTRIBUTE_NORMAL, 0);
-        printf("fdTable[fdIndex] = %d", fdTable[fdIndex]); //djm: Added: Testing
 	if (fdTable[fdIndex] == INVALID_HANDLE_VALUE) {
 	    LeaveCriticalSection(&fdTableLock);
 	    free(wc);
